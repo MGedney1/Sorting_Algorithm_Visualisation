@@ -40,12 +40,30 @@ def merge_sort_merge(left_list,right_list):      #Merging the lists
         result  = result  + left_list
     return result 
 
-def insertion_sort(lst):
-    for i in range(1,len(lst)):
-        j = i-1
-        next_element = lst[i]
-        while (lst[j] > next_element) and (j >= 0):
+def insertion_sort(lst):        
+    for i in range(1,len(lst)):     
+        j = i-1     #Starting comparison to just the first element of the list
+        next_element = lst[i]       #Iterating through the test values from start (indexed 1 intially) to insert
+        while (lst[j] > next_element) and (j >= 0):     #iterating through each element already ordered to find position of test value
             lst[j+1] = lst[j]
             j -= 1
         lst[j+1] = next_element
     return lst
+
+def shell_sort(lst):
+    
+    split_point = len(lst) // 2     #Initially splitting the list in half
+    while split_point > 0:
+
+        for i in range(split_point, len(lst)):
+            temp = lst[i]
+            j = i
+
+            while j >= split_point and lst[j - split_point] > temp:     #Sorting the subsection of the list
+                lst[j] = lst[j - split_point]
+                j = j - split_point
+            lst[j] = temp
+
+        split_point = split_point // 2      #splitting the unordered part of the list in half
+    return lst
+
