@@ -1,5 +1,6 @@
 import random
 import time
+from matplotlib import pyplot as plt
 
 def random_numbers(n):      #Creating the random array
     start_list = []
@@ -23,8 +24,12 @@ def bubble_sort(arr):        #Bubble sort
     return time_taken
 
 
-n = list(range(10,1000,10))
+n = list(range(10,1000,10))     #Running bubble sort for a range of array lengths and showing a graph of the times taken against array size
 times_bubble = []
 for x in range(len(n)):
     times_bubble.append(bubble_sort(random_numbers(n[x])))
-print(times_bubble)
+plt.plot(n,times_bubble)
+plt.xlabel('Array Length')
+plt.ylabel('Time Taken /s')
+plt.title('Bubble Sort')
+plt.show()
