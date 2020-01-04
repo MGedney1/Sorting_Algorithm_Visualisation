@@ -1,7 +1,13 @@
 import random
 import time
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import tkinter as tk
+from tkinter import Frame,Label,Entry,Button
 
 def bubble_sort(lst):        #Bubble Sort
     index = len(lst) - 1
@@ -90,33 +96,43 @@ def create_array():
 
     return n,unordered
 
+class Window(Frame):
+
+    def __init__(self, master = None):
+        Frame.__init__(self,master)
+        self.master = master
+        self.set_up_window()
+
+    def set_up_window(self):
+        n,unordered = create_array()
+        title = 'Test'
+        generator = bubble_sort(unordered)
+
+
+        self.fig = plt.Figure()        #Creating axis and figure
+        self.ax = self.fig.add_subplot(111)
+    
+        self.bar_rects = ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
+
+        self.ax.set_xlim(0, n)       #Axis limits
+        self.ax.set_ylim(0, int(1.07 * n))
+
+        self.text = self.ax.text(0.02, 0.95, "", transform=self.ax.transAxes)      #Number of operations counter
+
+        self.iteration = [0]
+        def update_fig(unordered, rects, iteration):        #Update fig function
+            for rect, val in zip(rects, unordered):     #Setting height of the rectangles
+                rect.set_height(val)
+            iteration[0] += 1
+            text.set_text("# of operations: {}".format(iteration[0]))
+
+        self.anim = animation.FuncAnimation(fig, func=self.update_fig, fargs=(self.bar_rects, self.iteration), frames=generator, interval=1,repeat=False)       #Creating the animation
+
 if __name__ == '__main__':
-    n,unordered = create_array()
-
-    title = 'Test'
-    generator = bubble_sort(unordered)
-
-
-    fig, ax = plt.subplots()        #Creating axis and figure
-    ax.set_title(title)     #Adding a title
+    root = tk.Tk()
+    root.geometry("700x400")
+    app = Window(root)
+    tk.mainloop()
 
     
-    bar_rects = ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
-
-    ax.set_xlim(0, n)       #Axis limits
-    ax.set_ylim(0, int(1.07 * n))
-
-    text = ax.text(0.02, 0.95, "", transform=ax.transAxes)      #Number of operations counter
-
-    iteration = [0]
-    def update_fig(unordered, rects, iteration):        #Update fig function
-        for rect, val in zip(rects, unordered):     #Setting height of the rectangles
-            rect.set_height(val)
-        iteration[0] += 1
-        text.set_text("# of operations: {}".format(iteration[0]))
-
-    anim = animation.FuncAnimation(fig, func=update_fig,        #Creating the animation
-        fargs=(bar_rects, iteration), frames=generator, interval=1,
-        repeat=False)
-
-    plt.show()      #Showing the plot
+   
