@@ -103,16 +103,21 @@ class Window(Frame):
         self.master = master
         self.set_up_window()
 
+    def update_fig(unordered, rects, iteration):        #Update fig function
+        for rect, val in zip(rects, unordered):     #Setting height of the rectangles
+            rect.set_height(val)
+        iteration[0] += 1
+        text.set_text("# of operations: {}".format(iteration[0]))
+
     def set_up_window(self):
         n,unordered = create_array()
         title = 'Test'
         generator = bubble_sort(unordered)
 
 
-        self.fig = plt.Figure()        #Creating axis and figure
-        self.ax = self.fig.add_subplot(111)
+        self.fig,self.ax = plt.subplots()        #Creating axis and figure
     
-        self.bar_rects = ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
+        self.bar_rects = self.ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
 
         self.ax.set_xlim(0, n)       #Axis limits
         self.ax.set_ylim(0, int(1.07 * n))
@@ -120,13 +125,11 @@ class Window(Frame):
         self.text = self.ax.text(0.02, 0.95, "", transform=self.ax.transAxes)      #Number of operations counter
 
         self.iteration = [0]
-        def update_fig(unordered, rects, iteration):        #Update fig function
-            for rect, val in zip(rects, unordered):     #Setting height of the rectangles
-                rect.set_height(val)
-            iteration[0] += 1
-            text.set_text("# of operations: {}".format(iteration[0]))
 
-        self.anim = animation.FuncAnimation(fig, func=self.update_fig, fargs=(self.bar_rects, self.iteration), frames=generator, interval=1,repeat=False)       #Creating the animation
+        self.anim = animation.FuncAnimation(self.fig, func=self.update_fig, fargs=(self.bar_rects, self.iteration), frames=generator, interval=1,repeat=False)       #Creating the animatio
+        
+        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
+        self.canvas.get_tk_widget().grid(column=0,row=1)
 
 if __name__ == '__main__':
     root = tk.Tk()
