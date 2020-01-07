@@ -1,13 +1,12 @@
 import random
 import time
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import tkinter as tk
-from tkinter import Frame,Label,Entry,Button
+from matplotlib import style
+style.use('ggplot')
+from tkinter import Tk,Label,Entry,Button
+
 
 def bubble_sort(lst):        #Bubble Sort
     index = len(lst) - 1
@@ -87,55 +86,101 @@ def shell_sort(lst):
         split_point = split_point // 2      #splitting the unordered part of the list in half
         yield lst
 
-def create_array():
-    n = int(input('Input the length of the arrays to sort:\n>'))        #Taking user input for array length
+def create_array(n):
 
     unordered = [i + 1 for i in range(n)]       #Creating a list of subsequent values
     random.seed(time.time())
     random.shuffle(unordered)       #Shuffling the list
 
-    return n,unordered
+    return unordered
 
-class Window(Frame):
-
-    def __init__(self, master = None):
-        Frame.__init__(self,master)
-        self.master = master
-        self.set_up_window()
-
-    def update_fig(unordered, rects, iteration):        #Update fig function
+def update_fig(unordered, rects, iteration,text):        #Update fig function
         for rect, val in zip(rects, unordered):     #Setting height of the rectangles
             rect.set_height(val)
         iteration[0] += 1
         text.set_text("# of operations: {}".format(iteration[0]))
 
-    def set_up_window(self):
-        n,unordered = create_array()
-        title = 'Test'
-        generator = bubble_sort(unordered)
+def create_animation(generator,unordered,n):
+    title = 'Sorting Animation'
 
+    fig, ax = plt.subplots()        #Creating axis and figure
+    ax.set_title(title)     #Adding a title
 
-        self.fig,self.ax = plt.subplots()        #Creating axis and figure
     
-        self.bar_rects = self.ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
+    bar_rects = ax.bar(range(len(unordered)), unordered, align="edge")      #Creating the rectangular bars
 
-        self.ax.set_xlim(0, n)       #Axis limits
-        self.ax.set_ylim(0, int(1.07 * n))
+    ax.set_xlim(0, n)       #Axis limits
+    ax.set_ylim(0, int(1.07 * n))
 
-        self.text = self.ax.text(0.02, 0.95, "", transform=self.ax.transAxes)      #Number of operations counter
+    text = ax.text(0.02, 0.95, "", transform=ax.transAxes)      #Number of operations counter
 
-        self.iteration = [0]
+    iteration = [0]
 
-        self.anim = animation.FuncAnimation(self.fig, func=self.update_fig, fargs=(self.bar_rects, self.iteration), frames=generator, interval=1,repeat=False)       #Creating the animatio
+    if generator != merge_sort:
+        anim = animation.FuncAnimation(fig, func=update_fig,        #Creating the animation
+            fargs=(bar_rects, iteration,text), frames=generator(unordered), interval=1,
+            repeat=False)
+    else:
+        anim = animation.FuncAnimation(fig, func=update_fig,        #Creating the animation for merge sort
+            fargs=(bar_rects, iteration,text), frames=generator(unordered,0,n-1), interval=1,
+            repeat=False)
+
+    plt.show()      #Showing the plot
+
+class GUI:
+    def __init__(self,master):
+        self.master = master
+        master.title('Sorting Algorithm Visualisation')
+
+
+        self.instruct = Label(master, text="Please enter a length for the array to sort: ")
+        self.instruct.grid(row = 1, column = 1,columnspan=2,ipadx=50)
+
+        self.length = Entry(master)
+        self.length.grid(row=1,column=3,padx=5,pady=5,columnspan=2,ipadx=50)
+
+        self.close_button = Button(master, text="Close", command=master.quit)
+        self.close_button.grid(row=1,column=6,padx=5,pady=5)
+
+        self.bubble_sort = Button(master, text="Bubble Sort",command=self.bubble_s)
+        self.bubble_sort.grid(row=2,column=1,padx=5,pady=5)
+
+        self.merge_sort = Button(master, text="Merge Sort",command=self.merge_s)
+        self.merge_sort.grid(row=2,column=2,padx=5,pady=5)
+
+        self.insertion_sort = Button(master, text="Insertion Sort",command=self.insertion_s)
+        self.insertion_sort.grid(row=2,column=3,padx=5,pady=5)
+
+        self.shell_sort = Button(master, text="Shell Sort",command=self.shell_s)
+        self.shell_sort.grid(row=2,column=4,padx=5,pady=5)
+
         
-        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
-        self.canvas.get_tk_widget().grid(column=0,row=1)
+    def get_length(self):
+        self.n = int(self.length.get())
+
+
+    def bubble_s(self):
+        self.animate(bubble_sort)
+    
+    def merge_s(self):
+        self.animate(merge_sort)
+
+    def insertion_s(self):
+        self.animate(insertion_sort)
+
+    def shell_s(self):
+        self.animate(shell_sort)
+    
+
+    def animate(self,generator):
+        self.get_length()
+        unordered = create_array(self.n)
+        create_animation(generator,unordered,self.n)
+
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    root.geometry("700x400")
-    app = Window(root)
-    tk.mainloop()
+    root = Tk()
+    gui = GUI(root)
+    root.mainloop()
 
     
-   
