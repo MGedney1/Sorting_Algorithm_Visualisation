@@ -9,8 +9,9 @@ from tkinter import Tk,Label,Entry,Button
 
 
 def bubble_sort(lst):        #Bubble Sort
+    """Bubble-sort a list, yielding the list at each swap."""
     index = len(lst) - 1
-    while index >= 0:
+    for index in reversed(list(range(len(lst)))):
         test_index = index
         while test_index >= 0:
             if lst[index] < lst[test_index]:
@@ -23,7 +24,7 @@ def bubble_sort(lst):        #Bubble Sort
     
 
 def merge_sort(lst, start, end):        #Merge sort
-
+    """Merge-sort a list, yielding the list at each swap."""
     if end <= start:        
         return
 
@@ -34,7 +35,7 @@ def merge_sort(lst, start, end):        #Merge sort
     yield lst
 
 def merge(lst, start, mid, end):
-    
+    """Merge-sort a list, merging of the lists stage, yielding the list at each merge."""
     result = []
     leftIdx = start
     rightIdx = mid + 1
@@ -59,7 +60,8 @@ def merge(lst, start, mid, end):
         lst[start + i] = sorted_val
         yield lst
 
-def insertion_sort(lst):        
+def insertion_sort(lst):     
+    """Insertion-sort a list, yielding the list at each swap."""   
     for i in range(1,len(lst)):     
         j = i-1     #Starting comparison to just the first element of the list
         next_element = lst[i]       #Iterating through the test values from start (indexed 1 intially) to insert
@@ -70,7 +72,7 @@ def insertion_sort(lst):
         yield lst
 
 def shell_sort(lst):
-    
+    """Shell-sort a list, yielding the list at each swap."""
     split_point = len(lst) // 2     #Initially splitting the list in half
     while split_point > 0:
 
@@ -87,7 +89,7 @@ def shell_sort(lst):
         yield lst
 
 def create_array(n):
-
+    """Creates and shuffles an array of consecutive numbers up to n"""
     unordered = [i + 1 for i in range(n)]       #Creating a list of subsequent values
     random.seed(time.time())
     random.shuffle(unordered)       #Shuffling the list
@@ -95,12 +97,14 @@ def create_array(n):
     return unordered
 
 def update_fig(unordered, rects, iteration,text):        #Update fig function
+    """Animation function for the plots"""
         for rect, val in zip(rects, unordered):     #Setting height of the rectangles
             rect.set_height(val)
         iteration[0] += 1
-        text.set_text("# of operations: {}".format(iteration[0]))
+        text.set_text("Number of operations: {}".format(iteration[0]))
 
 def create_animation(generator,unordered,n):
+    """Creating the animation"""
     title = 'Sorting Animation'
 
     fig, ax = plt.subplots()        #Creating axis and figure
